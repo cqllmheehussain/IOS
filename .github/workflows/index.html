@@ -1,0 +1,703 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Control Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            padding-bottom: 80px; /* Space for the navigation bar */
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            margin-bottom: 70px; /* Space for the navigation bar */
+        }
+        
+        .header {
+            background: linear-gradient(to right, #1a2a6c, #4a00e0);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #fdbb2d, #b21f1f);
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .info-box {
+            background: #f1f5f9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4a00e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-box p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .btn-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #1a2a6c, #4a00e0);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #4a00e0, #1a2a6c);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #fdbb2d, #b21f1f);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to right, #b21f1f, #fdbb2d);
+            transform: translateY(-3px);
+        }
+        
+        .btn-tertiary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-tertiary:hover {
+            background: #cbd5e0;
+            transform: translateY(-3px);
+        }
+        
+        .home-btn {
+            background: linear-gradient(to right, #38a169, #48bb78);
+            color: white;
+            grid-column: span 2;
+            margin-top: 10px;
+        }
+        
+        .home-btn:hover {
+            background: linear-gradient(to right, #48bb78, #38a169);
+            transform: translateY(-3px);
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .instructions h3 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #fdbb2d;
+            padding-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .platform-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 5px;
+        }
+        
+        .platform-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-tab.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #1a2a6c;
+        }
+        
+        .platform-content {
+            display: none;
+        }
+        
+        .platform-content.active {
+            display: block;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .failure-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* iPhone-style Navigation Bar */
+        .iphone-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 0;
+            z-index: 1000;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 15px;
+        }
+        
+        .nav-btn i {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .nav-btn.active {
+            color: #fdbb2d;
+        }
+        
+        .nav-home-indicator {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 16px;
+                font-size: 1rem;
+            }
+            
+            .btn-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-primary {
+                grid-column: span 1;
+            }
+            
+            .home-btn {
+                grid-column: span 1;
+            }
+            
+            .iphone-nav {
+                padding: 10px 0;
+            }
+            
+            .nav-btn {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            
+            .nav-btn i {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> Phone Control Hub</h1>
+            <p>Direct access to settings and home screen</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <p>This advanced tool uses multiple techniques to open your device settings and return to home screen.</p>
+                <p><strong>Note:</strong> Some methods may require user interaction or may not work on all browsers.</p>
+            </div>
+            
+            <div class="btn-container">
+                <button id="openSettingsBtn" class="btn btn-primary">
+                    <i class="fas fa-bolt"></i> Open Settings (Auto-Detect)
+                </button>
+                
+                <button id="openAndroidBtn" class="btn btn-secondary">
+                    <i class="fab fa-android"></i> Android Specific
+                </button>
+                
+                <button id="openIOSBtn" class="btn btn-secondary">
+                    <i class="fab fa-apple"></i> iOS Specific
+                </button>
+                
+                <button id="showInstructionsBtn" class="btn btn-tertiary">
+                    <i class="fas fa-info-circle"></i> Show Instructions
+                </button>
+                
+                <button id="goHomeBtn" class="btn home-btn">
+                    <i class="fas fa-home"></i> Go to Home Screen
+                </button>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Redirecting to settings...
+            </div>
+            
+            <div id="failureMessage" class="failure-message">
+                <i class="fas fa-exclamation-circle"></i> Could not open settings automatically. Please try another method.
+            </div>
+            
+            <div id="instructions" class="instructions">
+                <h3><i class="fas fa-mobile-alt"></i> Device Instructions</h3>
+                
+                <div class="platform-tabs">
+                    <div class="platform-tab active" data-tab="ios">iOS</div>
+                    <div class="platform-tab" data-tab="android">Android</div>
+                    <div class="platform-tab" data-tab="desktop">Desktop</div>
+                </div>
+                
+                <div class="platform-content active" id="ios-content">
+                    <ol>
+                        <li>Try the "iOS Specific" button first</li>
+                        <li>If that doesn't work, try the "Auto-Detect" button</li>
+                        <li>If nothing happens, manually open Settings from your home screen</li>
+                        <li>Scroll down to find your browser in the app list</li>
+                        <li>Tap to access website permissions and settings</li>
+                        <li>For advanced settings, go to Safari > Advanced > Experimental Features</li>
+                    </ol>
+                </div>
+                
+                <div class="platform-content" id="android-content">
+                    <ol>
+                        <li>Try the "Android Specific" button first</li>
+                        <li>If that doesn't work, try the "Auto-Detect" button</li>
+                        <li>Check if a popup appears asking to open settings</li>
+                        <li>If nothing happens, check your browser's permission requests</li>
+                        <li>Alternatively, manually open Settings from your notification shade or app drawer</li>
+                        <li>Go to Apps > [Your Browser] > Permissions to manage settings</li>
+                    </ol>
+                </div>
+                
+                <div class="platform-content" id="desktop-content">
+                    <ol>
+                        <li>While this tool is designed for mobile, you can try the buttons</li>
+                        <li>Most desktop browsers don't allow opening system settings</li>
+                        <li>To access browser settings, use the menu (three dots) in your browser</li>
+                        <li>Look for "Settings" or "Preferences" in the menu</li>
+                        <li>For system settings, use your operating system's control panel or system preferences</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Note: This tool uses advanced techniques but may not work on all devices or browsers due to security restrictions.</p>
+        </div>
+    </div>
+
+    <!-- iPhone-style Navigation Bar -->
+    <div class="iphone-nav">
+        <a href="javascript:void(0)" class="nav-btn" id="navBack">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </a>
+        
+        <a href="javascript:void(0)" class="nav-btn" id="navHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        
+        <a href="javascript:void(0)" class="nav-btn" id="navSettings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        
+        <a href="javascript:void(0)" class="nav-btn" id="navTasks">
+            <i class="fas fa-window-restore"></i>
+            <span>Tasks</span>
+        </a>
+        
+        <div class="nav-home-indicator"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const openSettingsBtn = document.getElementById('openSettingsBtn');
+            const openAndroidBtn = document.getElementById('openAndroidBtn');
+            const openIOSBtn = document.getElementById('openIOSBtn');
+            const showInstructionsBtn = document.getElementById('showInstructionsBtn');
+            const goHomeBtn = document.getElementById('goHomeBtn');
+            const instructions = document.getElementById('instructions');
+            const successMessage = document.getElementById('successMessage');
+            const failureMessage = document.getElementById('failureMessage');
+            const platformTabs = document.querySelectorAll('.platform-tab');
+            
+            // Navigation bar elements
+            const navBack = document.getElementById('navBack');
+            const navHome = document.getElementById('navHome');
+            const navSettings = document.getElementById('navSettings');
+            const navTasks = document.getElementById('navTasks');
+            
+            // Initially hide instructions and messages
+            instructions.style.display = 'none';
+            
+            // Open settings with auto-detection
+            openSettingsBtn.addEventListener('click', function() {
+                if (openSettingsForDevice()) {
+                    showSuccess();
+                } else {
+                    showFailure();
+                }
+            });
+            
+            // Android-specific method
+            openAndroidBtn.addEventListener('click', function() {
+                if (openAndroidSettings()) {
+                    showSuccess();
+                } else {
+                    showFailure();
+                }
+            });
+            
+            // iOS-specific method
+            openIOSBtn.addEventListener('click', function() {
+                if (openIOSSettings()) {
+                    showSuccess();
+                } else {
+                    showFailure();
+                }
+            });
+            
+            // Go Home button functionality
+            goHomeBtn.addEventListener('click', function() {
+                goToHomeScreen();
+            });
+            
+            // Navigation bar - Back button
+            navBack.addEventListener('click', function() {
+                window.history.back();
+            });
+            
+            // Navigation bar - Home button
+            navHome.addEventListener('click', function() {
+                goToHomeScreen();
+            });
+            
+            // Navigation bar - Settings button
+            navSettings.addEventListener('click', function() {
+                if (openSettingsForDevice()) {
+                    showSuccess();
+                } else {
+                    showFailure();
+                }
+            });
+            
+            // Navigation bar - Tasks button
+            navTasks.addEventListener('click', function() {
+                // Simulate the app switcher/task view
+                alert('App switcher would open here. This is a simulation.');
+            });
+            
+            // Show instructions button functionality
+            showInstructionsBtn.addEventListener('click', function() {
+                if (instructions.style.display === 'none') {
+                    instructions.style.display = 'block';
+                    showInstructionsBtn.innerHTML = '<i class="fas fa-times-circle"></i> Hide Instructions';
+                } else {
+                    instructions.style.display = 'none';
+                    showInstructionsBtn.innerHTML = '<i class="fas fa-info-circle"></i> Show Instructions';
+                }
+            });
+            
+            // Platform tabs functionality
+            platformTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Deactivate all tabs
+                    platformTabs.forEach(t => t.classList.remove('active'));
+                    // Activate clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all content
+                    document.querySelectorAll('.platform-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show relevant content
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+            
+            // Device detection and settings opening functions
+            function openSettingsForDevice() {
+                // For iOS devices
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    return openIOSSettings();
+                } 
+                // For Android devices
+                else if (/Android/.test(navigator.userAgent)) {
+                    return openAndroidSettings();
+                } 
+                // For other devices
+                else {
+                    return openGenericSettings();
+                }
+            }
+            
+            function openAndroidSettings() {
+                try {
+                    // Method 1: Standard intent (most common)
+                    window.location.href = 'intent://settings/#Intent;scheme=android-app;package=com.android.settings;end';
+                    
+                    // Method 2: Alternative approach if first method fails
+                    setTimeout(function() {
+                        window.location.href = 'android-app://com.android.settings';
+                    }, 300);
+                    
+                    // Method 3: Try to open specific settings pages
+                    setTimeout(function() {
+                        window.location.href = 'intent://settings/security#Intent;scheme=android-app;package=com.android.settings;end';
+                    }, 600);
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error opening Android settings:', e);
+                    return false;
+                }
+            }
+            
+            function openIOSSettings() {
+                try {
+                    // Method 1: Try opening general settings (most common)
+                    window.location.href = 'App-Prefs:root';
+                    
+                    // Method 2: Try opening specific settings
+                    setTimeout(function() {
+                        window.location.href = 'App-Prefs:root=General';
+                    }, 300);
+                    
+                    // Method 3: Try Safari settings as a fallback
+                    setTimeout(function() {
+                        window.location.href = 'App-Prefs:root=SAFARI';
+                    }, 600);
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error opening iOS settings:', e);
+                    return false;
+                }
+            }
+            
+            function openGenericSettings() {
+                try {
+                    // Try to trigger a permission request that might lead to settings
+                    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                        navigator.mediaDevices.getUserMedia({ video: true })
+                            .then(function(stream) {
+                                // If permission granted, we don't need settings
+                                stream.getTracks().forEach(track => track.stop());
+                                showSuccess();
+                            })
+                            .catch(function(error) {
+                                console.log('Permission denied, user might be directed to settings');
+                                showSuccess();
+                            });
+                    } else {
+                        // Final fallback
+                        alert('Please check your browser settings manually.');
+                        return false;
+                    }
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Error with generic method:', e);
+                    return false;
+                }
+            }
+            
+            function goToHomeScreen() {
+                try {
+                    // For Android - try to launch launcher intent
+                    if (/Android/.test(navigator.userAgent)) {
+                        window.location.href = 'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;end';
+                    } 
+                    // For iOS - there's no direct way, so we'll minimize the app
+                    else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                        // iOS doesn't allow directly going to home screen from browser
+                        // So we'll instead redirect to a blank page and let the user swipe to close
+                        window.location.href = 'about:blank';
+                    } 
+                    // For other devices
+                    else {
+                        window.location.href = 'about:blank';
+                    }
+                } catch (e) {
+                    console.error('Error going to home screen:', e);
+                    window.location.href = 'about:blank';
+                }
+            }
+            
+            function showSuccess() {
+                successMessage.style.display = 'block';
+                failureMessage.style.display = 'none';
+                
+                // Hide success message after 3 seconds
+                setTimeout(function() {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+            
+            function showFailure() {
+                failureMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                
+                // Hide failure message after 5 seconds
+                setTimeout(function() {
+                    failureMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Detect user's device and pre-select the appropriate tab
+            function detectDevice() {
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    document.querySelector('[data-tab="ios"]').click();
+                } else if (/Android/.test(navigator.userAgent)) {
+                    document.querySelector('[data-tab="android"]').click();
+                } else {
+                    document.querySelector('[data-tab="desktop"]').click();
+                }
+            }
+            
+            // Run device detection
+            detectDevice();
+        });
+    </script>
+</body>
+</html>
